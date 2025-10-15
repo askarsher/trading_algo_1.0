@@ -7,12 +7,12 @@ class MarketSimulator:
     Simulates execution delay, slippage, and transaction costs.
     Orders are 'pending' for 10 minutes, before being checked again for signal correctness.
     """
-    def __init__(self, strategy):
+    def __init__(self, strategy, portfolio):
         self.pending_signal_queue = deque()
         self.strategy = strategy
         self.portfolio = portfolio
 
-    def submit_signal_for_check(self, order):
+    def submit_signal_for_check(self, signal):
         self.pending_signal_queue.append(signal)
         print(f"Signal received for {signal['signal']} {signal['symbol']}. Awaiting delay check in {EXECUTION_DELAY_MINUTES} min.")
 
@@ -56,7 +56,7 @@ class MarketSimulator:
 
             # Retrieve open positions details from portfolio
             position_to_close = self.portfolio.positions[symbol]['order_details']
-            remaining_seconds = self.portfolio.positions[symbol]['order_details']
+            remaining_seconds = position_to_close['expiry_timestamp'] - current_tick['timestamp']
             if remaining_seconds <= 0:
                 theoretical_price = 0 # Option expired
             else:
@@ -81,11 +81,11 @@ class MarketSimulator:
             
             if order["type"] == "DOWN_AND_OUT_CALL":
                 theoretical_price = price_down_and_out_call(
-                    execution_underlying_price, order["strike"], order["barrier"], T, order["volatility_at_order"]
+                    execution_underlying_price, order["strike"], order["barrier"], T_years, order["volatility_at_order"]
                 )
             elif order["type"] == "UP_AND_OUT_PUT":
                 theoretical_price = price_up_and_out_put(
-                    execution_underlying_price, order["strike"], order["barrier"], T, order["volatility_at_order"]
+                    execution_underlying_price, order["strike"], order["barrier"], T_years, order["volatility_at_order"]
                 )
             else:
                 theoretical_price = 0 # Fallback for unknown types
