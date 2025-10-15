@@ -5,7 +5,7 @@ class Executor:
     """
     Receives a signal, prices the required option, and creates a trade order.
     """
-    def __init__(self, market_simulator):
+    def __init__(self, market_simulator, portfolio):
         self.simulator = market_simulator
         self.portfolio = portfolio
 
@@ -39,7 +39,10 @@ class Executor:
             if not self.portfolio.can_transact(estimated_cost):
                 print(f"Order REJECTED: Insufficient funds for {signal['signal']} {signal['symbol']}. Required: ${estimated_cost:.2f}, Available: ${self.portfolio.cash:,.2f}")
                 return None # Abort processing
-                
+
+            # Convert expiry from days to seconds
+            expiry_seconds = signal["expiry_days"] * 24 * 60 * 60
+            
             # Create a detailed order object to send for execution
             order = {
                 "symbol": signal["symbol"],
