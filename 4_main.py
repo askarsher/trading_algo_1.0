@@ -59,7 +59,7 @@ class MockApiClient:
         
         return {
             "symbol": symbol,
-            "timestamp": time.time(),
+            "timestamp": timestamp,
             "price": underlying_price,
             "reference_option_price": reference_option_price,
             "reference_option_strike": underlying_price
@@ -89,7 +89,7 @@ def main():
     end_date = start_date + datetime.timedelta(days=15)
     
     # 1. Initialize all components
-    api_client = MockApiClient()
+    api_client = MockApiClient(sim_clock)
     feed = Feed(api_client)
     portfolio = Portfolio(initial_capital=INITIAL_CAPITAL)
     strategy = MeanReversionStrategy()
@@ -113,7 +113,7 @@ def main():
                     if "EXIT" in signal["signal"]:
                         fill = executor.process_signal(signal, current_tick)
                         if fill:
-                            portoflio.update_on_fill(fill)
+                            portfolio.update_on_fill(fill)
                             logger.log_trade_close(fill)
                     else:
                         market_sim.submit_signal_for_check(signal)
@@ -121,7 +121,7 @@ def main():
         # E. Check if any pending signals are ready to be checked
         current_bars = feed.bar_series.get(SYMBOLS)
         if current_bars:
-            validated_signals = market_sim.process_pending_signal(checked_signal, current_tick)
+            validated_signal = market_sim.process_pending_signal(checked_signal, current_tick)
             if validated_signal:
                 # If signal is validated, process for execution
                 fill = executor.process_signal(validated_signal, current_tick)
