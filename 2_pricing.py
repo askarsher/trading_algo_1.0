@@ -60,8 +60,6 @@ def price_up_and_out_put(S, K, B, T, sigma):
         return 0 # Knocked out
     r = RISK_FREE_RATE
     vanilla_price = price_vanilla_put(S, K, T, sigma)
-    lam = (r + 0.5 * sigma**2) / (sigma**2)
-    x1 = (math.log(B**2 / (S * K)) + lam * sigma**2 * T) / (sigma * math.sqrt(T))
     #Similar rationale for using the reflection_term as above
-    reflection_term = (K * math.exp(-r * T) * (B / S)**(2 * lam - 2) * norm_cdf(-x1 * sigma * math.sqrt(T)) - S * (B / S)**(2 * lam) * norm_cdf(-x1))
+    reflection_term = (S / B) ** (1 - (2 * r / sigma**2)) * price_vanilla_put(B**2 / S, K, T, sigma)
     return vanilla_price - reflection_term
