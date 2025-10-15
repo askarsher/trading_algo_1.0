@@ -11,9 +11,9 @@ def get_implied_vol(option_market_price, S, K, T, flag):
     try:
         T_year = T / 365.0
         r = RISK_FREE_RATE
-        implied_vol = iv.implied_volatility(option_market_price, S, K, T_years, r, flag)
+        implied_vol = iv.implied_volatility(option_market_price, S, K, T_year, r, flag)
         return implied_vol
-    except exception:
+    except Exception:
         return 0.20
 
 #Will be utilizing Black-Scholes model and standard pricing parameters, where
@@ -36,7 +36,7 @@ def price_vanilla_call(S, K, T, sigma):
 def price_vanilla_put(S, K, T, sigma):
     """Prices a standard European put option using Black-Scholes."""
     if T <= 0:
-        reutrn max(0, S - K)
+        return max(0, K - S)
     r = RISK_FREE_RATE
     d1 = (math.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * math.sqrt(T))
     d2 = d1 - sigma * math.sqrt(T)
