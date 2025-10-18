@@ -18,7 +18,7 @@ STD_DEV_MULTIPLIER = 2.0
 
 # Market Simulation Parameters
 EXECUTION_DELAY_MINUTES = 10
-SLIPPAGE_PERCENT = 0.0005 # 0.05% slippage, more realistic than 1%
+SLIPPAGE_PERCENT = 0.0005 # 0.05% slippage; realistic amount from financial literature
 TRANSACTION_FEES = { # Sample fee structure 
     "ORF_PER_CONTRACT": 0.02685,
     "OCC_PER_CONTRACT": 0.02
